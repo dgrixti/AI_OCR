@@ -46,6 +46,8 @@
         }
     }
 
+    // Desktop (mouse)
+
     canvas.addEventListener("mousedown", function (e) {
 
         if (e.target == canvas) {
@@ -81,5 +83,60 @@
 
     }, false);
 
+
+    // Mobile (touch)
+
+    canvas.addEventListener("touchstart", function (e) {
+
+        console.log("touch screen");
+
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+
+        var rect = canvas.getBoundingClientRect();
+        var touch = e.touches[0];
+
+        var mouseX = touch.clientX - rect.left;
+        var mouseY = touch.clientY - rect.top;
+
+        isDrawing = true;
+        addMouseStroke(mouseX, mouseY);
+        renderCanvas();
+
+    }, false)
+
+    canvas.addEventListener("touchmove", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+        if (isDrawing) {
+            var rect = canvas.getBoundingClientRect();
+            var touch = e.touches[0];
+
+            var mouseX = touch.clientX - rect.left;
+            var mouseY = touch.clientY - rect.top;
+
+            addMouseStroke(mouseX, mouseY, true);
+            renderCanvas();
+        }
+    }, false);
+
+    canvas.addEventListener("touchend", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+        isDrawing = false;
+
+        getMnistDataV2();
+
+    }, false);
+
+    canvas.addEventListener("touchleave", function (e) {
+        if (e.target == canvas) {
+            e.preventDefault();
+        }
+        isDrawing = false;
+    }, false);
 
 })()

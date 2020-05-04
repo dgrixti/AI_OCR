@@ -59,8 +59,9 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    background: #f1f1f1;
 }
 .footer {
   position: absolute;
@@ -77,4 +78,15 @@ canvas {
     margin-bottom: 1rem;
     display: block;
     border:1px solid black;
+}
+
+
+
+.navbar {
+    background-color: #23282d !important;
+    color:white;
+}
+
+.navbar-light .navbar-brand {
+    color: #f1f1f1 !important;
 }

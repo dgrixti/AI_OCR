@@ -19,6 +19,11 @@ namespace AI_OCR.Controllers
         private static string DATASET_FILE_1 = "";
         private static string DATASET_FILE_2 = ""; // cw2DataSet3
 
+        private static List<string> DATASET_FILE_CONTENT_1 = new List<string>();
+        private static List<string> DATASET_FILE_CONTENT_2 = new List<string>();
+
+        private static object lockfile1 = new object(); 
+
         public AI_OCRController(ILogger<HomeController> logger, IWebHostEnvironment env)
         {
             /// _logger = logger;
@@ -52,10 +57,11 @@ namespace AI_OCR.Controllers
             try
             {
                 // Load the training file points
-                loadDataFromFile(charactersTrain, DATASET_FILE_1);
+                loadDataFromFile(charactersTrain, DATASET_FILE_1, DATASET_FILE_CONTENT_1);
 
-                // TODO: Try adding dataset2 as well?
-                
+                // Load the training file points from dataset 2 as well.
+                loadDataFromFile(charactersTrain, DATASET_FILE_2, DATASET_FILE_CONTENT_2);
+
                 // Predict the number
                 int answer = NearestNeighbourClassifier.processNNAndPredict(charactersTrain, charactersTest, distCalc);
 
@@ -67,29 +73,55 @@ namespace AI_OCR.Controllers
                 return "ERROR " + e.Message + " FILE: " + DATASET_FILE_1;
             }
         }
-        private static void loadDataFromFile(List<OCRCharacter> cities, String fileName)
+        private static void loadDataFromFile(List<OCRCharacter> cities, String fileName,
+            List<string> dataSet)
         {
             try
             {
-                // Read the file and display it line by line.  
-                System.IO.StreamReader file =
-                    new System.IO.StreamReader(fileName);
-
-                int counter = 0;
-                string line;
-
-                while ((line = file.ReadLine()) != null)
+                // if already full
+                if (dataSet != null && dataSet.Count > 0)
                 {
-                    System.Console.WriteLine(line);
-                    addCharacter(cities, line, true);
-                    counter++;
+                    loadDataFromDataset(cities, dataSet);
+                    return;
                 }
+                else
+                {
+                    lock (lockfile1)
+                    {
+                        // Read the file and display it line by line.  
+                        System.IO.StreamReader file =
+                        new System.IO.StreamReader(fileName);
 
-                file.Close();
+                        int counter = 0;
+                        string line;
+
+                        // Cache data in array so it's loaded from file once.
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            //System.Console.WriteLine(line);
+
+                            // add to memory so that the physical file isnt locked for each thread.
+                            dataSet.Add(line);
+                            counter++;
+                        }
+
+                        file.Close();
+                    }
+
+                    loadDataFromDataset(cities, dataSet);
+                }
             }
             catch (Exception e)
             {
                 throw e;
+            }
+        }
+
+        private static void loadDataFromDataset(List<OCRCharacter> cities, List<string> dataSet)
+        {
+            foreach (string line in dataSet)
+            {
+                addCharacter(cities, line, true);
             }
         }
 

@@ -11,7 +11,7 @@ using System.IO;
 
 namespace AI_OCR.Controllers
 {
-    public class AI_OCRController : Controller
+    public class AI_OCRController : BaseAIController
     {
         /// private readonly ILogger<HomeController> _logger;
         private readonly IWebHostEnvironment _env;
@@ -22,7 +22,6 @@ namespace AI_OCR.Controllers
         private static List<string> DATASET_FILE_CONTENT_1 = new List<string>();
         private static List<string> DATASET_FILE_CONTENT_2 = new List<string>();
 
-        private static object lockfile1 = new object(); 
 
         public AI_OCRController(ILogger<HomeController> logger, IWebHostEnvironment env)
         {
@@ -65,83 +64,12 @@ namespace AI_OCR.Controllers
                 // Predict the number
                 int answer = NearestNeighbourClassifier.processNNAndPredict(charactersTrain, charactersTest, distCalc);
 
-                return answer.ToString() ;
+                return answer.ToString();
 
             }
             catch (Exception e)
             {
                 return "ERROR " + e.Message + " FILE: " + DATASET_FILE_1;
-            }
-        }
-        private static void loadDataFromFile(List<OCRCharacter> cities, String fileName,
-            List<string> dataSet)
-        {
-            try
-            {
-                // if already full
-                if (dataSet != null && dataSet.Count > 0)
-                {
-                    loadDataFromDataset(cities, dataSet);
-                    return;
-                }
-                else
-                {
-                    lock (lockfile1)
-                    {
-                        // Read the file and display it line by line.  
-                        System.IO.StreamReader file =
-                        new System.IO.StreamReader(fileName);
-
-                        int counter = 0;
-                        string line;
-
-                        // Cache data in array so it's loaded from file once.
-                        while ((line = file.ReadLine()) != null)
-                        {
-                            //System.Console.WriteLine(line);
-
-                            // add to memory so that the physical file isnt locked for each thread.
-                            dataSet.Add(line);
-                            counter++;
-                        }
-
-                        file.Close();
-                    }
-
-                    loadDataFromDataset(cities, dataSet);
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        private static void loadDataFromDataset(List<OCRCharacter> cities, List<string> dataSet)
-        {
-            foreach (string line in dataSet)
-            {
-                addCharacter(cities, line, true);
-            }
-        }
-
-        private static void addCharacter(List<OCRCharacter> characters, String line, bool withAnswer)
-        {
-            String[] vars = line.Split(",");
-            double[] pointsArr = new double[vars.Length - 1];
-            for (int i = 0; i < vars.Length - 1; i++)
-            {
-                pointsArr[i] = Double.Parse(vars[i]);
-            }
-
-            // Find the answer from the sequence (training mode) or not (predicting mode).
-            if (withAnswer)
-            {
-                characters.Add(new OCRCharacter(pointsArr, Int32.Parse(vars[vars.Length - 1])));
-            }
-            else
-            {
-                characters.Add(new OCRCharacter(pointsArr, -1)); // -1 because we dont know what it is
             }
         }
     }

@@ -7,6 +7,7 @@ namespace AI_OCR
     public class EuclideanDistance : IDistance
     {
         // Based on the Euclidean equasion: https://en.wikipedia.org/wiki/Euclidean_distance.
+        // Distance = SQRT((x2-x1)^2+(y2-y1)^2))
         public double getDistance(double[] pointsArr1, double[] pointsArr2)
         {
             double total = 0, diff;

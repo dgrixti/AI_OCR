@@ -1,10 +1,35 @@
-﻿; (function () {
+﻿; (function () {0
+
+    var clearBtn = document.getElementById("resetButton");
 
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas.getContext('2d');
 
     var strokesArr = new Array();
     var isDrawing = false;
+
+    clearBtn.addEventListener("click", function (e) {
+
+        clearMouseStrokes();
+
+    }, false);
+
+    function clearMouseStrokes() {
+
+        // clear strokes
+        strokesArr = new Array();
+        isDrawing = false;
+
+        // clear main
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        // clear preview
+        var canvasThumb = document.getElementById('drawCanvasThumb');
+        const ctxThumb = canvasThumb.getContext('2d');
+        ctxThumb.clearRect(0, 0, ctxThumb.canvas.width, ctxThumb.canvas.height);
+
+        document.getElementById("charValueOutput").value = "";
+    }
 
     function addMouseStroke(mouseX, mouseY, isDrag) {
         var strokeObj = {};

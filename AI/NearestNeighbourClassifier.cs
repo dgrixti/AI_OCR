@@ -5,6 +5,10 @@ using System.Text;
 
 namespace AI_OCR
 {
+    /**
+     *
+     * @author Darren Grixti
+     */
     public class NearestNeighbourClassifier
     {
         public static int processNNAndPredict(List<OCRCharacter> charactersTrain,

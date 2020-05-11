@@ -29,6 +29,10 @@
         ctxThumb.clearRect(0, 0, ctxThumb.canvas.width, ctxThumb.canvas.height);
 
         document.getElementById("charValueOutput").value = "";
+
+        if (document.getElementById("charValueOutput2") != null && document.getElementById("charValueOutput2") != 'undefined') {
+            document.getElementById("charValueOutput2").value = "";
+        }
     }
 
     function addMouseStroke(mouseX, mouseY, isDrag) {

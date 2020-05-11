@@ -48,7 +48,7 @@ namespace AI_OCR.Controllers
         }
 
         [HttpPost]
-        public IActionResult PredictCharacter(string data)
+        public IActionResult PredictCharacterMLP(string data)
         {
             if (mlp == null)
             {
@@ -57,6 +57,29 @@ namespace AI_OCR.Controllers
 
             OCRCharacter charGuess = createCharacterFromBytes(data);
             int guess = mlp.recallNetworkGuess(charGuess);
+            return Json(guess.ToString());
+        }
+
+        [HttpPost]
+        public IActionResult PredictCharacterKNN(string data)
+        {
+            List<OCRCharacter> charactersTrain = new List<OCRCharacter>();
+
+            List<OCRCharacter> charactersTest = new List<OCRCharacter>();
+
+            // Load the training file points
+            loadDataFromFile(charactersTrain, DATASET_FILE_1, DATASET_FILE_CONTENT_1);
+
+            // Load the training file points from dataset 2 as well.
+            loadDataFromFile(charactersTrain, DATASET_FILE_2, DATASET_FILE_CONTENT_2);
+
+            // Load the training file points from dataset 2 as well.
+            ///loadDataFromFile(charactersTest, DATASET_FILE_2, DATASET_FILE_CONTENT_2);
+
+            bool useDistanceScoring = true;
+
+            OCRCharacter charGuess = createCharacterFromBytes(data);
+            int guess = KNNClassifier.processKNNAndPredict(charactersTrain, charGuess, new EuclideanDistance(), 4, useDistanceScoring);
             return Json(guess.ToString());
         }
 

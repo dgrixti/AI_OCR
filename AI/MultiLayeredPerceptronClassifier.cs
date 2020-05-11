@@ -9,11 +9,7 @@ namespace AI_OCR
 {
     /**
      * All the methods serve to create a custom layered multilayer perceptron
-     * or a deep learning neural network.
-     * 
-     * Reference: Adapted from: 
-     *      "Multi-layer Perceptron Tutorial" [ONLINE] http://blog.refu.co/?p=931 
-     *      
+     * or a deep learning neural network.     
      *      
      * Originally programed in Java and now translated to C#.
      * 
@@ -62,18 +58,18 @@ namespace AI_OCR
             }
         }
 
-        public static MultiLayeredPerceptronClassifier RESET
-        {
-            get
-            {
-                lock (padlock)
-                {
-                    instance = new MultiLayeredPerceptronClassifier(64, 10, 3, 52);
-                    instance.isTrained = false;
-                    return instance;
-                }
-            }
-        }
+        //public static MultiLayeredPerceptronClassifier RESET
+        //{
+        //    get
+        //    {
+        //        lock (padlock)
+        //        {
+        //            instance = new MultiLayeredPerceptronClassifier(64, 10, 3, 52);
+        //            instance.isTrained = false;
+        //            return instance;
+        //        }
+        //    }
+        //}
 
         /* 
          * Load a MLP from a saved state from file.

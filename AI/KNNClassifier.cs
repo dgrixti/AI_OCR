@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AI_OCR.AI
+namespace AI_OCR
 {
     /**
      *
@@ -15,6 +16,37 @@ namespace AI_OCR.AI
         private static int correct = 0;
         private static int incorrect = 0;
         private static int total = 0;
+
+        /**
+         * Runs the KNN classifier on the given a character and a training set.
+         * 
+         * @param charactersTrain: Training set array.
+         * @param charactersTest: Test set array.
+         * @param distCalc: Distance metric to use ex: Euclidean, Manhattan etc.
+         * @param kSize : The number of neoighbours to choose for classification vote.
+         * @param useDistanceScore: True use scoring based on euclidean distance for 
+         *          classification, False uses majority votes.
+         * 
+         */
+        public static int processKNNAndPredict(List<OCRCharacter> charactersTrain,
+                OCRCharacter characterTest, IDistance distCalc, int kSize,
+                bool useDistanceScore)
+        {
+
+            try
+            {
+                List<OCRCharacter> nearestNeighbours =
+                        findKNearestNeighbors(charactersTrain,
+                                distCalc, characterTest, kSize);
+                int classLabel = classify(nearestNeighbours, useDistanceScore);
+                return classLabel;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR " + e.Message);
+                return -1;
+            }
+        }
 
         /**
          * Runs the KNN classifier on the given 2-Fold dataset.
@@ -34,10 +66,10 @@ namespace AI_OCR.AI
 
             try
             {
-
                 correct = 0; incorrect = 0; total = 0;
 
-                //long startTime = DateTime.Now.Millisecond;
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
 
                 for (int i = 0; i < charactersTest.Count; i++)
                 {
@@ -60,21 +92,24 @@ namespace AI_OCR.AI
                     }
                 }
 
-                //long estimatedTime = System.nanoTime() - startTime;
+                stopwatch.Stop();
+                long estimatedTime = stopwatch.ElapsedMilliseconds; //System.nanoTime() - startTime;
 
-                float accuracy = (float)(correct * 100) / total;
-
+                // Show accuracy results.
                 Console.WriteLine(correct + " / " + charactersTest.Count);
-                Console.WriteLine("accuracy " + accuracy + "%");
 
-                // Time taken
-                //NumberFormat formatter = new DecimalFormat("#0.000");
-                // System.out.println("Execution time is " + formatter.format((float)estimatedTime / 1000000000) + " seconds");
+                float accuracy = (float)(correct * 100) / charactersTest.Count;
+                Console.WriteLine(accuracy + " % accuracy.");
+
+                // Time elapsed
+                Console.WriteLine("Execution time is " + ((float)estimatedTime / 1000000000).ToString("#0.000") + " seconds");
 
             }
             catch (Exception e)
             {
                 // e.printStackTrace();
+
+                Console.WriteLine("ERROR " + e.Message);
             }
         }
 
@@ -171,7 +206,7 @@ namespace AI_OCR.AI
                     {
                         value += 1.0;
                     }
-                    charOccurenceList.Add(key, value);
+                    charOccurenceList[key] = value; // update existing value + 1
                 }
             }
 

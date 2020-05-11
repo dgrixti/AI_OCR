@@ -43,8 +43,37 @@ namespace AI_OCR.Controllers
 
         public IActionResult Index()
         {
-            float accuracy = runMLP(-1);
+
+            // MLP TEST
+            /// RunTwoFoldTestMLP();
+
+            // KNN TEST
+            /// RunTwoFoldTestKNN();
+
             return View();
+        }
+
+        private void RunTwoFoldTestKNN()
+        {
+
+            List<OCRCharacter> charactersTrain = new List<OCRCharacter>();
+
+            List<OCRCharacter> charactersTest = new List<OCRCharacter>();
+
+            // Load the training file points
+            loadDataFromFile(charactersTrain, DATASET_FILE_1, DATASET_FILE_CONTENT_1);
+
+            // Load the training file points from dataset 2 as well.
+            loadDataFromFile(charactersTest, DATASET_FILE_2, DATASET_FILE_CONTENT_2);
+
+            bool useDistanceScoring = false;
+
+            KNNClassifier.processKNN(charactersTrain, charactersTest, new EuclideanDistance(), 4, useDistanceScoring);
+        }
+
+        private void RunTwoFoldTestMLP()
+        {
+            float accuracy = runMLP(-1);
         }
 
         [HttpPost]

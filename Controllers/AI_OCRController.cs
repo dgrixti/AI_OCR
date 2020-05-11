@@ -37,7 +37,25 @@ namespace AI_OCR.Controllers
 
         public IActionResult Index()
         {
+            // NN Test
+            /// RunTwoFoldTestNN();
+
             return View();
+        }
+
+        private void RunTwoFoldTestNN()
+        {
+            List<OCRCharacter> charactersTrain = new List<OCRCharacter>();
+
+            List<OCRCharacter> charactersTest = new List<OCRCharacter>();
+
+            // Load the training file points
+            loadDataFromFile(charactersTrain, DATASET_FILE_1, DATASET_FILE_CONTENT_1);
+
+            // Load the training file points from dataset 2 as well.
+            loadDataFromFile(charactersTest, DATASET_FILE_2, DATASET_FILE_CONTENT_2);
+
+            NearestNeighbourClassifier.processNN(charactersTrain, charactersTest, new EuclideanDistance());
         }
 
         [HttpPost]
@@ -50,8 +68,11 @@ namespace AI_OCR.Controllers
         private static string runNearesNeighbour(IDistance distCalc, string predictTest)
         {
             List<OCRCharacter> charactersTrain = new List<OCRCharacter>();
-            List<OCRCharacter> charactersTest = new List<OCRCharacter>();
-            addCharacter(charactersTest, predictTest, false);
+
+            OCRCharacter charGuess = createCharacterFromBytes(predictTest);
+
+            ///List<OCRCharacter> charactersTest = new List<OCRCharacter>();
+            ///addCharacter(charactersTest, predictTest, false);
 
             try
             {
@@ -62,7 +83,7 @@ namespace AI_OCR.Controllers
                 loadDataFromFile(charactersTrain, DATASET_FILE_2, DATASET_FILE_CONTENT_2);
 
                 // Predict the number
-                int answer = NearestNeighbourClassifier.processNNAndPredict(charactersTrain, charactersTest, distCalc);
+                int answer = NearestNeighbourClassifier.processNNAndPredict(charactersTrain, charGuess, distCalc);
 
                 return answer.ToString();
 

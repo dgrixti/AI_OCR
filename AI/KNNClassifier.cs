@@ -76,6 +76,7 @@ namespace AI_OCR
                     List<OCRCharacter> nearestNeighbours =
                             findKNearestNeighbors(charactersTrain,
                                     distCalc, charactersTest[i], kSize);
+
                     int classLabel = classify(nearestNeighbours, useDistanceScore);
 
                     total++;
@@ -117,45 +118,14 @@ namespace AI_OCR
                 List<OCRCharacter> trainListCharacters,
                 IDistance calculator, OCRCharacter currentCharacter, int kSize)
         {
-            //12
-
-            //List<cTag> week = new List<cTag>();
-            //week.Sort((x, y) =>
-            //    DateTime.ParseExact(x.date, "dd.MM.yyyy", CultureInfo.InvariantCulture).CompareTo(
-            //    DateTime.ParseExact(y.date, "dd.MM.yyyy", CultureInfo.InvariantCulture))
-            //);
-
-
-
-            //SortByDistance(trainListCharacters, calculator, currentCharacter);
-
-
             trainListCharacters.Sort(delegate (OCRCharacter itemA, OCRCharacter itemB)
             {
                 return itemA.getDistance(calculator, currentCharacter).CompareTo(itemB.getDistance(calculator, currentCharacter));
             });
 
-            //    // Find the closes 2 (or K) character neighbours by comparing them all with 
-            //    // their respective eucledian distance and getting final K from bottom list.
-            //    List <OCRCharacter> nearestNeighbours = trainListCharacters.stream().sorted((c1, c2)-> {
-            //        return c1.getDistance(calculator, currentCharacter) < c2.getDistance(calculator, currentCharacter) ? -1
-            //            : c1.getDistance(calculator, currentCharacter) > c2.getDistance(calculator, currentCharacter) ? 1
-            //            : 0;
-            //    }).skip(0).limit(kSize).collect(Collectors.toCollection(ArrayList::new));
-
-
-            return trainListCharacters;
+            List<OCRCharacter> listRet = trainListCharacters.Take<OCRCharacter>(kSize).ToList();
+            return listRet;
         }
-
-        ////public static string SortByDistance(List<OCRCharacter> items, IDIstance calculator, OCRCharacter currentCharacter)
-        ////{
-        ////    items.Sort(delegate (OCRCharacter itemA, OCRCharacter itemB)
-        ////    {
-        ////        return itemA.getDistance(calculator, currentCharacter).CompareTo(itemB.getDistance(calculator, currentCharacter));
-        ////    });
-
-        ////    return null;
-        ////}
 
         /**
          * Given a a list of neighbouring characters, checks which character kind has

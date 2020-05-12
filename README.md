@@ -2,4 +2,7 @@
 My AI - Optical Character Recognition program using machine learning.
 
 Please see tutorial for this code at:
-http://app.darrengrixti.com/ai-ocr/
+https://www.darrengrixti.com/ai-ocr/
+
+And part 2 at:
+https://www.darrengrixti.com/ai-ocr-algorithms/

@@ -26,6 +26,16 @@ namespace AI_OCR
             return this.pointsArr;
         }
 
+        public float[] getPointsFloatArr()
+        {
+            float[] floatArray = new float[pointsArr.Length];
+            for (int i = 0; i < pointsArr.Length; i++)
+            {
+                floatArray[i] = (float)pointsArr[i];
+            }
+            return floatArray;
+        }
+
         public double getDistance(IDistance distCalculator, OCRCharacter otherCharacter)
         {
             double dist = distCalculator.getDistance(this.pointsArr, otherCharacter.getPoints());

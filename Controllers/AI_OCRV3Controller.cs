@@ -35,15 +35,13 @@ namespace AI_OCR.Controllers
 
             DATASET_FILE_1 = Path.Combine(contentRootPath, "dataset", "cw2DataSet1.csv");
             DATASET_FILE_2 = Path.Combine(contentRootPath, "dataset", "cw2DataSet2.csv");
-            ML_TRAINED_MODEL = Path.Combine(contentRootPath, "dataset", "mlTrainedModel.zip"); 
+            ML_TRAINED_MODEL = Path.Combine(contentRootPath, "dataset", "mlTrainedModel_2.zip"); 
         }
 
         public IActionResult Index()
         {
             // ML Test
             RunTwoFoldTestML();
-             
-            MulticlassClassifier.RunTest(DATASET_FILE_1, DATASET_FILE_2, ML_TRAINED_MODEL);
 
             return View();
         }

@@ -11,6 +11,7 @@ WORKDIR /src
 COPY ["Dataset/cw2DataSet1.csv", "dataset/cw2DataSet1.csv"]
 COPY ["Dataset/cw2DataSet2.csv", "dataset/cw2DataSet2.csv"]
 COPY ["Dataset/mlpstate.json", "dataset/mlpstate.json"]
+COPY ["Dataset/test2tsp.txt", "dataset/test2tsp.txt"]
 
 COPY ["AI_OCR.csproj", ""]
 RUN dotnet restore "./AI_OCR.csproj"

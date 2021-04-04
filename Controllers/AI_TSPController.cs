@@ -107,6 +107,8 @@ namespace AI_OCR.Controllers
                 cityOrder = nn.GetCitiesResultToString()
             });
 
+
+            ////
             // return Json(nn.GetCitiesResult());
         }
 

@@ -28,7 +28,7 @@ namespace AI_OCR.Controllers
             string contentRootPath = _env.ContentRootPath;
             string webRootPath = _env.WebRootPath; // with wwwroot
 
-            DATASET_FILE_1 = Path.Combine(contentRootPath, "dataset", "test2tsp.txt");
+            DATASET_FILE_1 = Path.Combine(contentRootPath, "dataset", "test2tsp.json");
         }
 
         [HttpPost]

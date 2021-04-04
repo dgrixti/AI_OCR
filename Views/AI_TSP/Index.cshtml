@@ -48,18 +48,20 @@
 
             function plotCitiesSimple() {
                 var json = getCities("v1");
-                //for (var i = 0; i < json.length; i++) {
+
                 for (var i = 0; i < 4; i++) {
-
-                    console.log("city " + i + ": ");
                     var obj = json[i];
-                    // increase the space for each circle plotting
-                    obj.x = obj.x * 10;
-                    obj.y = obj.y * 2;
 
-                    console.log(obj.id + ": " + obj.x + ", " + obj.y);
+                    // increase the space for each circle plotting (visual purpose only)
+                    var objview = Object.create(obj);
+                    objview.x = objview.x * 10;
+                    objview.y = objview.y * 2;
+        
+                    ///console.log("orig: " + obj.id + ": " + obj.x + ", " + obj.y);
+                    ///console.log("copy: " + objview.id + ": " + objview.x + ", " + objview.y);
 
-                    drawCircle(canvasSimple, obj.id, obj.x, obj.y);
+                    // draw the points
+                    drawCircle(canvasSimple, objview.id, objview.x, objview.y);
                 }
             }
 
@@ -70,17 +72,23 @@
             async function plotCitiesSimpleSolved() {
                 var prePoint = null;
                 var json = getCities("v1");
-                //for (var i = 0; i < json.length; i++) {
+
                 for (var i = 0; i < 4; i++) {
-                    console.log("city " + i + ": ");
                     var obj = json[i];
-                    // increase the space for each circle plotting
-                    obj.x = obj.x * 10;
-                    obj.y = obj.y * 2;
-                    console.log(obj.id + ": " + obj.x + ", " + obj.y);
-                    // draw the points ()
-                    drawCircle(canvasSimpleSolved, obj.id, obj.x, obj.y);
+
+                    // increase the space for each circle plotting (visual purpose only)
+                    var objview = Object.create(obj);
+                    objview.x = objview.x * 10;
+                    objview.y = objview.y * 2;
+                    
+                    ///console.log("orig: " + obj.id + ": " + obj.x + ", " + obj.y);
+                    ///console.log("copy: " + objview.id + ": " + objview.x + ", " + objview.y);
+
+                    // draw the points
+                    drawCircle(canvasSimpleSolved, objview.id, objview.x, objview.y);
                 }
+
+                 await sleep("1000");
                 
                 // draw the lines
                 for (var i = 0; i < 4; i++) {
@@ -110,6 +118,32 @@
                     complete: function (data) {
                         if (data.responseJSON.length > 0) {
                             dataret = data.responseJSON;
+                            console.log("got response  xxx");
+
+                            console.log(data.responseJSON);
+                        }
+                        else {
+                            console.log("no data!");
+                        }
+                    }
+                });
+
+                return dataret;
+            }
+
+            function getPermutations(vers) {
+                var dataret = "";
+                $.ajax({
+                    type: "POST",
+                    traditional: true,
+                    dataType: "json",
+                    url: "/AI_TSP/GetPermutationsSimple",
+                    data: { vers },
+                    cache: false,
+                    async: false, // wait for result
+                    complete: function (data) {
+                        if (data.responseJSON.length > 0) {
+                            dataret = data.responseJSON;
                             console.log("got response");
                         }
                         else {
@@ -122,7 +156,48 @@
             }
 
             setTimeout("plotCitiesSimple()", 200);
-            setTimeout("plotCitiesSimpleSolved()", 200);
+            setTimeout("plotCitiesSimpleSolved()", 10000);
+            setTimeout("tableCreate()", 200);
+
+            function tableCreate() {
+                // Get permuations (4 cities)
+                var json = getPermutations("");
+
+                var body = document.getElementsByTagName('body')[0];
+                var tbl = document.createElement('table');
+                tbl.style.width = '100%';
+                tbl.setAttribute('border', '1');
+                var tbdy = document.createElement('tbody');
+
+                for (var i = 0; i < json.length; i++) {
+
+                    var tr = document.createElement('tr');
+
+                    for (var j = 0; j < 2; j++) {
+
+                        if (j == 0) {
+
+                            var td = document.createElement('td');
+                            td.appendChild(document.createTextNode((i + 1).toString() + "."))
+                            tr.appendChild(td);
+                            // break;
+
+                        } else if (j == 1) {
+                            // create td
+                            var td = document.createElement('td');
+                            td.appendChild(document.createTextNode(json[i]));
+                            tr.appendChild(td);
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                    tbdy.appendChild(tr);
+                }
+                tbl.appendChild(tbdy);
+                body.appendChild(tbl);
+            }
+
 
         </script>
     </div>

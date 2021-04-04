@@ -11,6 +11,7 @@ namespace AI_OCR.AI.TSP
 
         private List<City> citiesResult = null;
         private double totalDistanceRoute = 0;
+        private double totalDistanceRoute2 = 0;
         private List<City> cities = null;
 
         public TSPNearestNeighbour(List<City> cities)
@@ -47,6 +48,7 @@ namespace AI_OCR.AI.TSP
         {
 
             totalDistanceRoute = 0;
+            totalDistanceRoute2 = 0;
 
             // Create an array which will hold he cities route
             citiesResult = new List<City>();
@@ -67,6 +69,7 @@ namespace AI_OCR.AI.TSP
 
                 // Add to the total distance travelled.
                 totalDistanceRoute += currentCity.GetLastDistanceMeasured();
+
 
                 // Add the city to route list
                 AddCityToRoutesList(cities, citiesResult, currentCity);
@@ -114,6 +117,8 @@ namespace AI_OCR.AI.TSP
             {
                 nearestCity = cities[0];
                 nearestCity.MeasureDistance(currentCity);
+
+                /// Console.WriteLine("2 measuring city " + currentCity.Id + " with " + nearestCity.Id + " dist = " + totalDistanceRoute2);
             }
             else
             {
@@ -121,6 +126,10 @@ namespace AI_OCR.AI.TSP
                 // their respective position of the current city.
                 nearestCity = 
                     cities.Aggregate((c1, c2) => c1.MeasureDistance(currentCity) < c2.MeasureDistance(currentCity) ? c1 : c2);
+
+                totalDistanceRoute2 += currentCity.MeasureDistance(nearestCity);
+                
+                /// Console.WriteLine("2 measuring city " + currentCity.Id + " with " + nearestCity.Id + " dist = " + totalDistanceRoute2);
 
 
                 // My old code made in Java which is now translated

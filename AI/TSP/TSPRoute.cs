@@ -21,19 +21,27 @@ namespace AI_OCR.AI.TSP
             double totalDistance = 0;
             City previousCity = null;
 
+            // Add the first city to the last as the last hop to return home
+            citiesList.Add(citiesList[0]);
+
             foreach (City city in citiesList)
             {
                 if (previousCity == null)
+                {
                     previousCity = city;
+                }
                 else
+                {
                     totalDistance += city.MeasureDistance(previousCity);
+                    /// Console.WriteLine("1 measuring city " + city.Id + " with " + previousCity.Id + " dist = " + totalDistance);
+                    
+                    // imp to update the previous city
+                    previousCity = city;
+                }
             }
 
             // Remember to add the last route from the last point back to home (first city)
             totalDistance += citiesList[citiesList.Count-1].MeasureDistance(citiesList[0]);
-
-            // Add the first city to the last as the last hop to return home
-            citiesList.Add(citiesList[0]); 
 
             routeDistance = totalDistance;
 

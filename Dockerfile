@@ -7,11 +7,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
-# Added resources
+# Added resources - NOTE: MAKE SURE TO SET BUILD ON FILE AS COPY ALWAYS!!
 COPY ["Dataset/cw2DataSet1.csv", "dataset/cw2DataSet1.csv"]
 COPY ["Dataset/cw2DataSet2.csv", "dataset/cw2DataSet2.csv"]
-COPY ["Dataset/mlpstate.json", "dataset/mlpstate.json"]
-COPY ["Dataset/test2tsp.json", "dataset/test2tsp.json"]
+COPY ["Dataset/mlpstate.json", "Dataset/mlpstate.json"]
 COPY ["Dataset/test2tsp.txt", "dataset/test2tsp.txt"]
 
 COPY ["AI_OCR.csproj", ""]

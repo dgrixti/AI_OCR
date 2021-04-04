@@ -71,6 +71,25 @@ namespace AI_OCR.Controllers
         }
 
         [HttpGet]
+        public IActionResult FindRouteWithNN()
+        {
+            // Get cities x,y coordiates from file
+            List<City> cities = TSPHelper.ParseCitiesFromFile(DATASET_FILE_1);
+
+            TSPNearestNeighbour nn = new TSPNearestNeighbour(cities);
+            nn.Execute();
+
+
+            return Json(new
+            {
+                distance = nn.GetTotalDistanceRoute(),
+                cityOrder = nn.GetCitiesResultToString()
+            });
+
+            // return Json(nn.GetCitiesResult());
+        }
+
+        [HttpGet]
         public IActionResult FindRoute()
         {
             // Get cities x,y coordiates from file
@@ -96,11 +115,13 @@ namespace AI_OCR.Controllers
             {
                 output += city.Id.ToString() + ", ";
             }
-            output += "  with distance: " + winner.TotalDist.ToString("#.00");
-            Console.WriteLine(output);
+            Console.WriteLine(output + "  with distance: " + winner.TotalDist.ToString("#.00"));
 
-            return Json(output);
-            //return View();
+            return Json(new
+            {
+                distance = winner.TotalDist.ToString("#.00"),
+                cityOrder = output
+            });
         }
     }
 }

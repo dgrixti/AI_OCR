@@ -1,24 +1,27 @@
 ﻿@{
     ViewData["Title"] = "AI Projects";
 }
+
     <div class="text-center">
         <h1 class="display-4">AI Travelling Salesman Problem (Part 1)</h1>
 
-        <p><b>Example #1 </b> with 4 cities (24 possible paths).</p>
+        <p><b>Example #1 </b> with 3 cities (6 possible paths).</p>
 
-        
 
         <div class="main_container">
             <center>
                 <canvas id="drawCanvasSimple" width="750" height="200"></canvas>
-                <p>*H = Home (back to first city in sequence).</p>
+
+                <p />
+
+                <canvas id="canvasSimpleSolved" width="750" height="200"></canvas>
             </center>
         </div>
 
         <script>
 
             var canvasSimple = document.getElementById("drawCanvasSimple");
-            //var canvasSimpleSolved = document.getElementById("canvasSimpleSolved");
+            var canvasSimpleSolved = document.getElementById("canvasSimpleSolved");
 
             function drawCircle(canvasVar, id, x, y) {
                 var ctx = canvasVar.getContext("2d");
@@ -53,6 +56,9 @@
                     var objview = Object.create(obj);
                     objview.x = objview.x * 10;
                     objview.y = objview.y * 2;
+        
+                    ///console.log("orig: " + obj.id + ": " + obj.x + ", " + obj.y);
+                    ///console.log("copy: " + objview.id + ": " + objview.x + ", " + objview.y);
 
                     // draw the points
                     drawCircle(canvasSimple, objview.id, objview.x, objview.y);
@@ -61,6 +67,42 @@
 
             function sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            async function plotCitiesSimpleSolved() {
+                var prePoint = null;
+                var json = getCities("v1");
+
+                for (var i = 0; i < 4; i++) {
+                    var obj = json[i];
+
+                    // increase the space for each circle plotting (visual purpose only)
+                    var objview = Object.create(obj);
+                    objview.x = objview.x * 10;
+                    objview.y = objview.y * 2;
+                    
+                    ///console.log("orig: " + obj.id + ": " + obj.x + ", " + obj.y);
+                    ///console.log("copy: " + objview.id + ": " + objview.x + ", " + objview.y);
+
+                    // draw the points
+                    drawCircle(canvasSimpleSolved, objview.id, objview.x, objview.y);
+                }
+
+                 await sleep("1000");
+                
+                // draw the lines
+                for (var i = 0; i < 4; i++) {
+                    var obj = json[i];
+                    if (prePoint !== null) {
+                        drawLine(canvasSimpleSolved, prePoint.x, prePoint.y, obj.x, obj.y);
+                    }
+                    prePoint = obj;
+                    await sleep("1000");
+                }
+
+                // draw the final closing point
+                drawLine(canvasSimpleSolved, json[0].x, json[0].y, json[3].x, json[3].y);
+
             }
 
             function getCities(vers) {
@@ -114,94 +156,49 @@
                 return dataret;
             }
 
-            //setTimeout("plotCitiesSimple()", 200);
-            //setTimeout("plotCitiesSimpleSolved()", 10000);
-            setTimeout("calculatePermutations()", 200);
+            setTimeout("plotCitiesSimple()", 200);
+            setTimeout("plotCitiesSimpleSolved()", 10000);
+            setTimeout("tableCreate()", 200);
 
-            async function calculatePermutations() {
+            function tableCreate() {
+                // Get permuations (4 cities)
+                var json = getPermutations("");
 
-                var ctx = canvasSimple.getContext("2d");
-                var cities = getCities("v1");
-                var permutations = getPermutations("v1");
-                var prePoint = null;
+                var body = document.getElementsByTagName('body')[0];
+                var tbl = document.createElement('table');
+                tbl.style.width = '100%';
+                tbl.setAttribute('border', '1');
+                var tbdy = document.createElement('tbody');
 
-                // foreach permutation, create sequence of points
-                for (i = 0; i < permutations.length; i++) {
+                for (var i = 0; i < json.length; i++) {
 
-                    // clear canvas
-                    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    var tr = document.createElement('tr');
 
-                    ctx.strokeStyle = 'black';
-                    ctx.font = "13px Arial";
-                    ctx.fillText("permutation: " + (i + 1), 10, 15);
-                    ctx.fillText("   sequence: " + permutations[i] + "H", 10, 32);
+                    for (var j = 0; j < 2; j++) {
 
-                    // plot all 4 cities
-                    for (var j = 0; j < 4; j++) {
+                        if (j == 0) {
 
-                        var obj = cities[j];
+                            var td = document.createElement('td');
+                            td.appendChild(document.createTextNode((i + 1).toString() + "."))
+                            tr.appendChild(td);
+                            // break;
 
-                        // make the x,y bigger to make canvas drawing 
-                        // of points more spacious (visual purpose only)
-                        var objview = Object.create(obj);
-                        objview.x = objview.x * 10;
-                        objview.y = objview.y * 2;
-
-                        // draw the points
-                        drawCircle(canvasSimple, objview.id, objview.x, objview.y);
-                    }
-
-                    await sleep("1000");
-
-                    console.log("exec permutation: " + permutations[i]);
-
-                    // start the pemutations 
-                    var firstCity = null;
-                    var permArr = permutations[i].split(", ");
-                    for (k = 0; k < permArr.length - 1; k++) {
-
-                        var idx = permArr[k] - 1;
-                        var obj = cities[idx];
-
-                        if (firstCity == null) {
-                            firstCity = obj;
+                        } else if (j == 1) {
+                            // create td
+                            var td = document.createElement('td');
+                            td.appendChild(document.createTextNode(json[i]));
+                            tr.appendChild(td);
                         }
-
-                        console.log("PERM SEQ " + idx + " from " + permArr[k]);
-                        console.log(obj);
-
-                        if (prePoint !== null) {
-                            // make the x,y bigger to make canvas drawing 
-                            // of points more spacious (visual purpose only)
-                            var objview = Object.create(obj);
-                            objview.x = objview.x * 10;
-                            objview.y = objview.y * 2;
-
-                            var prepview = Object.create(prePoint);
-                            prepview.x = prepview.x * 10;
-                            prepview.y = prepview.y * 2;
-
-                            // draw the points
-                            drawLine(canvasSimple, prepview.x, prepview.y, objview.x, objview.y);
+                        else {
+                            break;
                         }
-                        prePoint = obj;
-                        await sleep("500");
                     }
-
-                    // make a closing to return to the first point (back home)
-                    var objview = Object.create(firstCity);
-                    objview.x = objview.x * 10;
-                    objview.y = objview.y * 2;
-
-                    var prepview = Object.create(prePoint);
-                    prepview.x = prepview.x * 10;
-                    prepview.y = prepview.y * 2;
-
-                    drawLine(canvasSimple, prepview.x, prepview.y, objview.x, objview.y);
-
-                    await sleep("1000");
+                    tbdy.appendChild(tr);
                 }
+                tbl.appendChild(tbdy);
+                body.appendChild(tbl);
             }
+
 
         </script>
     </div>

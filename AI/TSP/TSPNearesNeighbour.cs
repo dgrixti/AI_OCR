@@ -123,6 +123,7 @@ namespace AI_OCR.AI.TSP
                     cities.Aggregate((c1, c2) => c1.MeasureDistance(currentCity) < c2.MeasureDistance(currentCity) ? c1 : c2);
 
 
+                // My old code made in Java which is now translated
                 //nearestCity = cities.stream().min((c1, c2)-> {
                 //    return c1.measureDistance(currentCity) < c2.measureDistance(currentCity) ? -1
                 //        : c1.measureDistance(currentCity) > c2.measureDistance(currentCity) ? 1
